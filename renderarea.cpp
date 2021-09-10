@@ -3,9 +3,10 @@
 #include <QPainter>
 
 RenderArea::RenderArea(QWidget *parent) :
-    QWidget(parent), mBackgroundColor(0,0,255),
-    mShapeColor(255,255,255),
-    mShape(Astroid)
+    QWidget(parent), mBackgroundColor(249,216,203),//peach color
+    mShapeColor(0,0,0),
+    mShape(Astroid),
+    fancyCurveA(11), fancyCurveB(6)
 {
     on_shape_changed();
 }
@@ -24,14 +25,14 @@ void RenderArea::on_shape_changed()
     switch (mShape)
     {
     case Astroid:
-        mScale = 50;
+        mScale = 90;
         mIntervalLength = 2 * M_PI;
         mStepCount = 256;
         break;
 
     case Cycloid:
-        mScale = 4;
-        mIntervalLength = 6 * M_PI;
+        mScale = 10;
+        mIntervalLength = 4 * M_PI;
         mStepCount = 128;
         break;
 
@@ -42,9 +43,16 @@ void RenderArea::on_shape_changed()
         break;
 
     case HypoCycloid:
-        mScale = 15;
+        mScale = 20;
         mIntervalLength = 2 * M_PI;
         mStepCount = 256;
+        break;
+
+    case FancyCurve:
+        mScale = 4;
+        mIntervalLength = 12 * M_PI;
+        mStepCount = 512;
+        fancyCurveA = 11; fancyCurveB = 6;
         break;
 
     default:
@@ -81,6 +89,13 @@ QPointF  RenderArea::compute_hypoCycloid(float t)
     return QPointF(x,y);
 }
 
+QPointF  RenderArea::compute_fancyCurve(float t)
+{
+    float x = fancyCurveA * cos(t) - fancyCurveB * cos((fancyCurveA/fancyCurveB)*t);
+    float y = fancyCurveA * sin(t) - fancyCurveB * sin((fancyCurveA/fancyCurveB)*t);
+    return QPointF(x,y);
+}
+
 QPointF  RenderArea::compute(float t)
 {
     switch (mShape)
@@ -101,6 +116,10 @@ QPointF  RenderArea::compute(float t)
         return compute_hypoCycloid(t);
         break;
 
+    case FancyCurve:
+        return compute_fancyCurve(t);
+        break;
+
     default:
         break;
 
@@ -112,9 +131,12 @@ QPointF  RenderArea::compute(float t)
 void RenderArea::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
+    QPen pen;
     painter.setBrush(mBackgroundColor);
     painter.setRenderHint(QPainter::Antialiasing , true);
-    painter.setPen(mShapeColor);
+
+    pen.setColor(mShapeColor);
+    painter.setPen(pen);
 
     painter.drawRect(this->rect());
 

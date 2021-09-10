@@ -36,6 +36,16 @@ private slots:
 
     void on_spinBox_valueChanged(int arg1);
 
+    void on_btnFancy_clicked();
+
+    void on_editA_textChanged(const QString &arg1);
+
+    void on_bEdit_textChanged(const QString &arg1);
+
+    void on_editA_editingFinished();
+
+    void on_editA_textEdited(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     void update_ui();
